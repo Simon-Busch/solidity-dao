@@ -5,6 +5,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+// STAKEHOLDER > CONTRIBUTOR
 contract Project is ReentrancyGuard, AccessControl {
     // as per OpenZepellin ReentrancyGuard and AccessControl here so we should go ahead and import those
     // important security features
@@ -23,16 +24,16 @@ contract Project is ReentrancyGuard, AccessControl {
     // definition holds the necessary data that makes up each proposal object
     struct ProjectProposal {
         uint256 id;
-        uint256 amount;
-        uint256 livePeriod;
-        uint256 votesFor;
-        uint256 votesAgainst;
+        uint256 amount; // amount of votes
+        uint256 livePeriod; // duration of the project proposal
+        uint256 votesFor; // number of votes for the project
+        uint256 votesAgainst; // number of vote against the project
         string description;
-        bool votingPassed;
-        bool paid;
-        address payable projectAddress;
-        address proposer;
-        address paidBy;
+        bool votingPassed; // voting still on ?
+        bool paid; // is it paid ? 
+        address payable projectAddress; // address of the project to pay
+        address proposer; // person that introducted the project
+        address paidBy; // who paid
     }
 
     // It uses the id of the Proposal as key and the Proposal itself as the value.
@@ -116,9 +117,48 @@ contract Project is ReentrancyGuard, AccessControl {
         }
     }
 
-    // payProjects
+    // handles payment to the specified address after the voting period of the proposal has ended and is valid
+    function payProject(uint256 proposalId)
+        external
+        onlyStakeholder("Only stakeholders are allowed to make payments")
+    {
+        ProjectProposal storage proposal = projectProposals[proposalId];
+        require(!proposal.paid, "payment already done");
+        require(proposal.votesFor > proposal.votesAgainst, "not enough votes");
+        
+        (bool sent, ) = proposal.projectAddress.call{value: proposal.amount}("");
+        require(sent, "Transfer failed");
 
-    // make stake holder
+        proposal.paid = true;
+        proposal.paidBy = msg.sender;
+
+        emit PaymentTransfered(
+            msg.sender,
+            proposal.projectAddress,
+            proposal.amount
+        );
+        // return proposal.projectAddress.transfer(proposal.amount);
+    }
+
+    function makeStakeholder(uint256 amount) external {
+        address account = msg.sender;
+        uint256 amountContributed = amount;
+        if (!hasRole(STAKEHOLDER_ROLE, account)) {
+            uint256 totalContributed = contributors[account] + amountContributed;
+            if (totalContributed >= 5 ether) {
+                stakeholders[account] = totalContributed;
+                contributors[account] += amountContributed;
+                _setupRole(STAKEHOLDER_ROLE, account);
+                _setupRole(CONTRIBUTOR_ROLE, account);
+            } else {
+                contributors[account] += amountContributed;
+                _setupRole(CONTRIBUTOR_ROLE, account);
+            }
+        } else {
+            contributors[account] += amountContributed;
+            stakeholders[account] += amountContributed;
+        }
+    }
 
     // get all proposals 
 
@@ -133,4 +173,9 @@ contract Project is ReentrancyGuard, AccessControl {
     // get contributor balance
 
     // check if is a contributor 
+
+    // This is needed so the contract can receive contributions without throwing an error
+    receive() external payable {
+        emit ContributionReceived(msg.sender, msg.value);
+    }
 }
