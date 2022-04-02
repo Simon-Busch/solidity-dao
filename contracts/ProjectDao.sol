@@ -1,12 +1,12 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.4;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 // STAKEHOLDER > CONTRIBUTOR
-contract Project is ReentrancyGuard, AccessControl {
+contract ProjectDao is ReentrancyGuard, AccessControl {
     // as per OpenZepellin ReentrancyGuard and AccessControl here so we should go ahead and import those
     // important security features
     // Users of the DAO will be of two types - Contributors and Stakeholders
@@ -188,9 +188,14 @@ contract Project is ReentrancyGuard, AccessControl {
         return stakeholders[msg.sender] > 0;
     }
 
-    // get contributor balance
+    function getContributorBalance() public view onlyContributor("User is not a contributor") returns (uint256) {
+        return contributors[msg.sender];
+    }
 
-    // check if is a contributor 
+
+    function isContributor() public view returns (bool) {
+        return contributors[msg.sender] > 0;
+    }
 
     // This is needed so the contract can receive contributions without throwing an error
     receive() external payable {
