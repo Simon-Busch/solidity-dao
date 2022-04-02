@@ -5,7 +5,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract TestDao is ReentrancyGuard, AccessControl {
+contract Project is ReentrancyGuard, AccessControl {
     // as per OpenZepellin ReentrancyGuard and AccessControl here so we should go ahead and import those
     // important security features
     // Users of the DAO will be of two types - Contributors and Stakeholders
@@ -35,9 +35,13 @@ contract TestDao is ReentrancyGuard, AccessControl {
         address paidBy;
     }
 
+    // It uses the id of the Proposal as key and the Proposal itself as the value.
     mapping(uint256 => ProjectProposal) private projectProposal;
+    // maps the address of a Stakeholder to a list of the Proposals that address has voted on.
     mapping(address => uint256[]) private stakeholderVotes;
+    // maps the Contributor addresses and the amounts they have sent into the DAO treasury.
     mapping(address => uint256) private contributors;
+    // maps the addresses and balances of Stakeholders.
     mapping(address => uint256) private stakeholders;
 
 }
