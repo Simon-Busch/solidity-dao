@@ -74,6 +74,7 @@ contract Project is ReentrancyGuard, AccessControl {
         onlyStakeholder("Only stakeholders are allowed to create proposals")
     {
         uint256 proposalId = numOfProposals++;
+        
         ProjectProposal storage proposal = projectProposals[proposalId];
         proposal.id = proposalId;
         proposal.proposer = payable(msg.sender);
@@ -83,4 +84,26 @@ contract Project is ReentrancyGuard, AccessControl {
         proposal.livePeriod = block.timestamp + MINIMUM_VOTING_PERIOD;
         emit NewProjectProposal(msg.sender, _amount);
     }
+
+    // vote 
+
+    // votable 
+
+    // payProjects
+
+    // make stake holder
+
+    // get all proposals 
+
+    // get a specific proposal
+
+    // get stakeholder votes
+
+    // get stakeholder balance 
+
+    // check if is a stakeholder
+
+    // get contributor balance
+
+    // check if is a contributor 
 }
