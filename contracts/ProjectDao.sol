@@ -74,7 +74,7 @@ contract Project is ReentrancyGuard, AccessControl {
         onlyStakeholder("Only stakeholders are allowed to create proposals")
     {
         uint256 proposalId = numOfProposals++;
-        
+
         ProjectProposal storage proposal = projectProposals[proposalId];
         proposal.id = proposalId;
         proposal.proposer = payable(msg.sender);
@@ -85,9 +85,36 @@ contract Project is ReentrancyGuard, AccessControl {
         emit NewProjectProposal(msg.sender, _amount);
     }
 
-    // vote 
+    function vote(uint256 proposalId, bool supportProposal)
+        external
+        onlyStakeholder("Only stakeholders are allowed to vote")
+    {
+        ProjectProposal storage proposal = projectProposals[proposalId];
 
-    // votable 
+        _votable(proposal);
+
+        if (supportProposal) {
+            proposal.votesFor++;
+        } else {
+            proposal.votesAgainst++;
+        }
+
+        stakeholderVotes[msg.sender].push(proposal.id);
+    }
+
+    function _votable(ProjectProposal storage proposal) private {
+        if ( proposal.votingPassed || proposal.livePeriod <= block.timestamp) {
+            proposal.votingPassed = true;
+            revert("Voting period over");
+        }
+
+        uint256[] memory tempVotes = stakeholderVotes[msg.sender];
+        for (uint256 votes = 0; votes < tempVotes.length; votes++) {
+            if (proposal.id == tempVotes[votes]) {
+                revert("Stakeholder already voted");
+            }
+        }
+    }
 
     // payProjects
 
