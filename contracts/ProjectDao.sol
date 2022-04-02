@@ -174,11 +174,19 @@ contract Project is ReentrancyGuard, AccessControl {
         return projectProposals[proposalId];
     }
 
-    // get stakeholder votes
+    // returns a list containing the id of all the proposals that a particular stakeholder has voted on.
+    function getStakeholderVotes () public view onlyStakeholder("User is not a stakeholder") returns (uint256[]memory) {
+        return stakeholderVotes[msg.sender];
+    }
 
-    // get stakeholder balance 
+    // return the total amount of contribution a stakeholder has contributed to the DAO
+    function getStakeholderBalance() public view onlyStakeholder("User is not a stakeholder") returns (uint256) {
+        return stakeholders[msg.sender];
+    }
 
-    // check if is a stakeholder
+    function isStakeholder() public view returns (bool) {
+        return stakeholders[msg.sender] > 0;
+    }
 
     // get contributor balance
 
