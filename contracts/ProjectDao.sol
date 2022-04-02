@@ -53,13 +53,15 @@ contract Project is ReentrancyGuard, AccessControl {
         uint256 amount
     );
 
-    modifier onlyStakeholder() {
-        // restrict to stake holder
+    modifier onlyStakeholder(string memory message) {
+        // hasRole --> openZeppelin AccessControl contract
+        require(hasRole(STAKEHOLDER_ROLE, msg.sender), message);
         _;
     }
 
-    modifier onlyContributor() {
-         //  restrict to contributor
+    modifier onlyContributor(string memory message) {
+        // hasRole --> openZeppelin AccessControl contract
+        require(hasRole(CONTRIBUTOR_ROLE, msg.sender), message);
         _;
     }
 
@@ -69,7 +71,7 @@ contract Project is ReentrancyGuard, AccessControl {
         uint256 _amount
     )
         external
-        onlyStakeholder()
+        onlyStakeholder("Only stakeholders are allowed to create proposals")
     {
         uint256 proposalId = numOfProposals++;
         ProjectProposal storage proposal = projectProposals[proposalId];
