@@ -160,9 +160,19 @@ contract Project is ReentrancyGuard, AccessControl {
         }
     }
 
-    // get all proposals 
+    function getProposals() public view returns (ProjectProposal[] memory props) {
+        //declare an array with the length of numOfProposals which is icremented automatically
+        props = new ProjectProposal[](numOfProposals);
 
-    // get a specific proposal
+        // assign the proposal at the current index to the index in our fixed-size array
+        for (uint256 i = 0; i < numOfProposals; i++) {
+            props[i] = projectProposals[i];
+        }
+    }
+
+    function getProposal(uint256 proposalId) public view returns (ProjectProposal memory) {
+        return projectProposals[proposalId];
+    }
 
     // get stakeholder votes
 
