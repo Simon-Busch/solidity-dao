@@ -36,7 +36,7 @@ contract Project is ReentrancyGuard, AccessControl {
     }
 
     // It uses the id of the Proposal as key and the Proposal itself as the value.
-    mapping(uint256 => ProjectProposal) private projectProposal;
+    mapping(uint256 => ProjectProposal) private projectProposals;
     // maps the address of a Stakeholder to a list of the Proposals that address has voted on.
     mapping(address => uint256[]) private stakeholderVotes;
     // maps the Contributor addresses and the amounts they have sent into the DAO treasury.
@@ -44,4 +44,41 @@ contract Project is ReentrancyGuard, AccessControl {
     // maps the addresses and balances of Stakeholders.
     mapping(address => uint256) private stakeholders;
 
+    // emitted for every new proposal, new contribution and new payment transfer.
+    event ContributionReceived(address indexed fromAddress, uint256 amount);
+    event NewProjectProposal(address indexed proposer, uint256 amount);
+    event PaymentTransfered(
+        address indexed stakeholder,
+        address indexed projectAddress,
+        uint256 amount
+    );
+
+    modifier onlyStakeholder() {
+        // restrict to stake holder
+        _;
+    }
+
+    modifier onlyContributor() {
+         //  restrict to contributor
+        _;
+    }
+
+    function createProposal(
+        string calldata _description,
+        address _projectAddress,
+        uint256 _amount
+    )
+        external
+        onlyStakeholder()
+    {
+        uint256 proposalId = numOfProposals++;
+        ProjectProposal storage proposal = projectProposals[proposalId];
+        proposal.id = proposalId;
+        proposal.proposer = payable(msg.sender);
+        proposal.description = _description;
+        proposal.projectAddress = payable(_projectAddress);
+        proposal.amount = _amount;
+        proposal.livePeriod = block.timestamp + MINIMUM_VOTING_PERIOD;
+        emit NewProjectProposal(msg.sender, _amount);
+    }
 }
