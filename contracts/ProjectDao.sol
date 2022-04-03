@@ -54,6 +54,14 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
         uint256 amount
     );
 
+    constructor () payable {
+        // set up role for creator of the contract
+        stakeholders[msg.sender] = 10;
+        contributors[msg.sender] = 10;
+        _setupRole(STAKEHOLDER_ROLE, msg.sender);
+        _setupRole(CONTRIBUTOR_ROLE, msg.sender);
+    }
+
     modifier onlyStakeholder(string memory message) {
         // hasRole --> openZeppelin AccessControl contract
         require(hasRole(STAKEHOLDER_ROLE, msg.sender), message);
@@ -159,6 +167,7 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
             stakeholders[account] += amountContributed;
         }
     }
+
 
     function getProposals() public view returns (ProjectProposal[] memory props) {
         //declare an array with the length of numOfProposals which is icremented automatically
