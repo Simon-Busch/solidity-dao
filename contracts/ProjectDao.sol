@@ -133,7 +133,6 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
         ProjectProposal storage proposal = projectProposals[proposalId];
         require(!proposal.paid, "payment already done");
         require(proposal.votesFor > proposal.votesAgainst, "not enough votes");
-        
         (bool sent, ) = proposal.projectAddress.call{value: proposal.amount}("");
         require(sent, "Transfer failed");
 
@@ -210,4 +209,11 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
     receive() external payable {
         emit ContributionReceived(msg.sender, msg.value);
     }
+
+    // Allow people to enrole as contributor if > 0.05 donation  ? 
+    
+    // Issue a NFT for peoples as contributor or stakeholder ? 
+
+    // Create notion of global DAO treasury ? 
+    
 }
