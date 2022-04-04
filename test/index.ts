@@ -27,6 +27,14 @@ describe("Tests for the Project DAO ---------", function () {
         await projectDaoContract.getContributorBalance();
       expect(initialBalance).to.be.equal(10);
     });
+
+    it("Should be able to create a new contributor ", async function () {
+      await projectDaoContract.connect(owner[2]).makeStakeholder(255);
+      const isContri: boolean = await projectDaoContract
+        .connect(owner[2])
+        .isContributor();
+      expect(isContri).to.be.true;
+    });
   });
 
   describe("Stakeholder ----", function () {
@@ -135,6 +143,10 @@ describe("Tests for the Project DAO ---------", function () {
       expect(firstProp.paidBy).to.be.equal(
         "0x0000000000000000000000000000000000000000"
       );
+    });
+    it("Should be possible to get all proposal in an array", async function () {
+      const allProposals = await projectDaoContract.getProposals();
+      expect(allProposals.length).to.be.greaterThanOrEqual(1);
     });
   });
 

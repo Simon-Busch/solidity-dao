@@ -167,6 +167,11 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
         }
     }
 
+    function makeContributor(address _address) public onlyStakeholder("Only stakeholders are allowed to add contributors to the project") {
+        _setupRole(CONTRIBUTOR_ROLE, _address);
+        contributors[_address] = 0;
+    }
+
 
     function getProposals() public view returns (ProjectProposal[] memory props) {
         //declare an array with the length of numOfProposals which is icremented automatically
