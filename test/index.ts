@@ -120,4 +120,18 @@ describe("Tests for the Project DAO ---------", function () {
       );
     });
   });
+
+  describe("Voting -----", function () {
+    it("should be able to vote for a project", async function () {
+      await projectDaoContract.vote(0, true);
+      const firstProp = await projectDaoContract.getProposal(0);
+      expect(firstProp.votesFor).to.be.equal(1);
+    });
+
+    it("should be able to against a project", async function () {
+      await projectDaoContract.vote(0, false);
+      const firstProp = await projectDaoContract.getProposal(0);
+      expect(firstProp.votesAgainst).to.be.equal(1);
+    });
+  });
 });

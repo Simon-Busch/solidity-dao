@@ -112,7 +112,7 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
     }
 
     function _votable(ProjectProposal storage proposal) private {
-        if ( proposal.votingPassed || proposal.livePeriod <= block.timestamp) {
+        if ( proposal.votingPassed || proposal.livePeriod >= block.timestamp) {
             proposal.votingPassed = true;
             revert("Voting period over");
         }
