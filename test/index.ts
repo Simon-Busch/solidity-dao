@@ -40,6 +40,23 @@ describe("Tests for the Project DAO ---------", function () {
         await projectDaoContract.getStakeholderBalance();
       expect(initialBalance).to.be.equal(10);
     });
+
+    it("Should return a balance for stakeholder", async function () {
+      const balance: BigNumber =
+        await projectDaoContract.getStakeholderBalance();
+      expect(balance).to.be.equal(10);
+    });
+
+    it("Should return the votes for stakeholder", async function () {
+      const votesBefore = await projectDaoContract.getStakeholderVotes();
+      expect(votesBefore.length).to.be.equal(0);
+
+      await projectDaoContract.vote(0, true);
+
+      const votesAfter = await projectDaoContract.getStakeholderVotes();
+      expect(votesAfter.length).to.be.equal(1);
+
+    });
   });
 
   describe("Verify constants", function () {
@@ -132,6 +149,20 @@ describe("Tests for the Project DAO ---------", function () {
       await projectDaoContract.vote(0, false);
       const firstProp = await projectDaoContract.getProposal(0);
       expect(firstProp.votesAgainst).to.be.equal(1);
+    });
+  });
+
+  describe("Fallback receive -----", function () {
+    it("should be able to send a contribution", async function () {
+      await owner[2].sendTransaction({
+        to: projectDaoContract.address,
+        value: ethers.utils.parseEther("5"),
+      });
+
+      await projectDaoContract.connect(owner[2]).makeStakeholder(5552555);
+      const isCont: boolean = await projectDaoContract
+        .connect(owner[2])
+        .isStakeholder();
     });
   });
 });
