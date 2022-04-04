@@ -35,6 +35,11 @@ describe("Tests for the Project DAO ---------", function () {
         .isContributor();
       expect(isContri).to.be.true;
     });
+
+    it("should return contributor balance", async function () {
+      const balance = await projectDaoContract.getContributorBalance();
+      expect(balance.toNumber()).to.be.greaterThanOrEqual(10);
+    });
   });
 
   describe("Stakeholder ----", function () {
@@ -63,15 +68,35 @@ describe("Tests for the Project DAO ---------", function () {
 
       const votesAfter = await projectDaoContract.getStakeholderVotes();
       expect(votesAfter.length).to.be.equal(1);
+    });
 
+    it("should return stakeholder balance", async function () {
+      const balance = await projectDaoContract.getStakeholderBalance();
+      expect(balance.toNumber()).to.be.greaterThanOrEqual(10);
     });
   });
 
-  describe("Verify constants", function () {
+  describe("Constants ----", function () {
     it("Minimum voting period should be a week", async function () {
       const votingPeriod: number =
         await projectDaoContract.MINIMUM_VOTING_PERIOD();
       expect(votingPeriod / 60 / 60 / 7).to.be.equal(24);
+    });
+
+    it("Contributor role should be on hashed", async function () {
+      const contributorHash: string =
+        await projectDaoContract.CONTRIBUTOR_ROLE();
+      expect(contributorHash).to.be.equal(
+        "0xa0bb1af1c90aa52ed052b92714ff0087008cc720049bf1af77cca2600b31e80c"
+      );
+    });
+
+    it("Stakeholder role should be on hashed", async function () {
+      const stakeholderHash: string =
+        await projectDaoContract.STAKEHOLDER_ROLE();
+      expect(stakeholderHash).to.be.equal(
+        "0xf4bb84e1768dd286358a736d195a0b228621173f655a73b89bf8b191ed0ba07d"
+      );
     });
   });
 
@@ -148,6 +173,11 @@ describe("Tests for the Project DAO ---------", function () {
       const allProposals = await projectDaoContract.getProposals();
       expect(allProposals.length).to.be.greaterThanOrEqual(1);
     });
+    it("Should be possible to get a proposal by ID", async function () {
+      const firstProp = await projectDaoContract.getProposal(0);
+      expect(firstProp).to.not.be.null;
+      expect(firstProp).to.not.be.undefined;
+    });
   });
 
   describe("Voting -----", function () {
@@ -161,6 +191,12 @@ describe("Tests for the Project DAO ---------", function () {
       await projectDaoContract.vote(0, false);
       const firstProp = await projectDaoContract.getProposal(0);
       expect(firstProp.votesAgainst).to.be.equal(1);
+    });
+
+    it("should stakeholder votes", async function () {
+      await projectDaoContract.vote(0, false);
+      const votes = await projectDaoContract.getStakeholderVotes();
+      expect(votes.length).to.be.greaterThanOrEqual(1);
     });
   });
 
