@@ -1,19 +1,39 @@
+/* eslint-disable no-unused-expressions */
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { ProjectDao } from "../typechain";
 
-describe("Greeter", function () {
-  it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+describe("Tests for the Project DAO ---------", function () {
+  let ProjectDao;
+  let projectDaoContract: ProjectDao;
+  let owner: SignerWithAddress[];
+  beforeEach(async () => {
+    ProjectDao = await ethers.getContractFactory("ProjectDao");
+    projectDaoContract = await ProjectDao.deploy();
+    await projectDaoContract.deployed();
+    owner = await ethers.getSigners();
+  });
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+  describe("Contributor ----", function () {
+    it("Creator of the contract should be a contributor", async function () {
+      const isContri: boolean = await projectDaoContract.isContributor();
+      expect(isContri).to.be.true;
+    });
+  });
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+  describe("Stakeholder ----", function () {
+    it("Creator of the contract should be a stakeholder", async function () {
+      const isStake: boolean = await projectDaoContract.isStakeholder();
+      expect(isStake).to.be.true;
+    });
+  });
 
-    // wait until the transaction is mined
-    await setGreetingTx.wait();
-
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+  describe("Verify constants", function () {
+    it("Minimum voting period should be a week", async function () {
+      const votingPeriod: number =
+        await projectDaoContract.MINIMUM_VOTING_PERIOD();
+      expect(votingPeriod / 60 / 60 / 7).to.be.equal(24);
+    });
   });
 });
