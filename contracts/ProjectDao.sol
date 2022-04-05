@@ -215,6 +215,10 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
         emit ContributionReceived(msg.sender, msg.value);
     }
 
+    function getBalance() public view returns (uint) {
+        return address(this).balance;
+    }
+
     // Allow people to enrole as contributor if > 0.05 donation  ? 
     
     // Issue a NFT for peoples as contributor or stakeholder ? 

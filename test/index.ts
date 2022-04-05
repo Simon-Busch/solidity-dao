@@ -202,15 +202,15 @@ describe("Tests for the Project DAO ---------", function () {
 
   describe("Fallback receive -----", function () {
     it("should be able to send a contribution", async function () {
-      await owner[2].sendTransaction({
-        to: projectDaoContract.address,
-        value: ethers.utils.parseEther("5"),
-      });
 
-      await projectDaoContract.connect(owner[2]).makeStakeholder(5552555);
-      const isCont: boolean = await projectDaoContract
-        .connect(owner[2])
-        .isStakeholder();
+    await owner[0].sendTransaction({
+			to: projectDaoContract.address,
+			value: ethers.utils.parseEther("1.0"),
+		});
+
+      const balance = await projectDaoContract.getBalance();
+      // 1000000000000000000 wei = 1 eth
+      expect(balance).to.equal(ethers.utils.parseEther("1.0"));
     });
   });
 });
