@@ -1,46 +1,61 @@
-# Advanced Sample Hardhat Project
+# Solidity DAO
 
-This project demonstrates an advanced Hardhat use case, integrating other tools commonly used alongside Hardhat in the ecosystem.
+## Use case
+The idea of the implementation of this smart contract is to create DAO where user can propose a project and vote for | against it.
 
-The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
+For reference, the projec model looks like this:
+- id [uint256]
+- amount [uint256]
+- livePeriod [uint256]
+- votesFor [uint256]
+- votesAgainst [uint256]
+- description [string]
+- voting passed [bool]
+- paid [bool]
+- project Address [address payable]
+- proposer [address]
+- paidBy [address]
 
-Try running some of the following tasks:
+## Stack used
+- Solidity
+- Hardhat
 
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
+## Installation
+
+```bash
+npm i
+```
+
+## Requirement
+To interract with this Dapp, you will need a MetaMask account set on Rinkeby test network
+
+### Faucet
+In addition to MetaMask, you'll need ETH that you can get on various faucet.
+
+| Ethily | [https://ethily.io/rinkeby-faucet/](https://ethily.io/rinkeby-faucet/)
+
+| Official Rinkeby | [https://faucet.rinkeby.io/](https://faucet.rinkeby.io/)
+
+|Other faucet| | [https://faucets.chain.link/rinkeby](https://faucets.chain.link/rinkeby)
+## Hardhat
+
+⚠️ ⚠️If you do any changes in the SmartContract, first, run the tests:
+
+```bash
 npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
+```
+Then, you will also need to create a .env with the following variables:
+- URL_INFURA="YOUR INFURA DEPLOYMENT ADDRESS"
+- ACCOUNT_PRIVATE="YOUR PRIVATE ACCOUNT KEY FOR METAMASK"
+
+NB: if you want to upload a new smart contract, make sure you take the infura key for Rinkeby development.
+
+### Deploy your smart contract
+```bash
+npx hardhat run scripts/deploy.js --network rinkeby
 ```
 
-# Etherscan verification
+## Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
-
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
-
-```shell
-hardhat run --network ropsten scripts/deploy.ts
-```
-
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
-
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
-```
-
-# Performance optimizations
-
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+Please make sure to update tests as appropriate.
