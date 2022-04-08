@@ -22,6 +22,7 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
     uint256 public numOfProposals;
 
     // definition holds the necessary data that makes up each proposal object
+    // TODO : change amount to contribution
     struct ProjectProposal {
         uint256 id;
         uint256 amount; // amount of votes
@@ -44,6 +45,8 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
     mapping(address => uint256) private contributors;
     // maps the addresses and balances of Stakeholders.
     mapping(address => uint256) private stakeholders;
+
+    // TODO : ADD NEW MAPPING ADDRESS => MAPPING (UINT ( project_id ) => CONTRIBUTION)
 
     // emitted for every new proposal, new contribution and new payment transfer.
     event ContributionReceived(address indexed fromAddress, uint256 amount);
@@ -90,10 +93,12 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
         proposal.description = _description;
         proposal.projectAddress = payable(_projectAddress);
         proposal.amount = _amount;
+        // TODO Change amount to contribution ==> msg.value 
         proposal.livePeriod = block.timestamp + MINIMUM_VOTING_PERIOD;
         emit NewProjectProposal(msg.sender, _amount);
     }
 
+    // TODO -> pass an amount to contribute
     function vote(uint256 proposalId, bool supportProposal)
         external
         onlyStakeholder("Only stakeholders are allowed to vote")
@@ -125,6 +130,8 @@ contract ProjectDao is ReentrancyGuard, AccessControl {
         }
     }
 
+
+    // TODO Handle all contribution for various address and pay projet proposal
     // handles payment to the specified address after the voting period of the proposal has ended and is valid
     function payProject(uint256 proposalId)
         external
